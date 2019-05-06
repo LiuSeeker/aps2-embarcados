@@ -80,15 +80,15 @@ const uint32_t BUTTON_Y = ILI9488_LCD_HEIGHT/2;
 
 const uint32_t BNEXT_R = 25;
 const uint32_t BNEXT_X = ILI9488_LCD_WIDTH-30;
-const uint32_t BNEXT_Y = ILI9488_LCD_HEIGHT-30;
+const uint32_t BNEXT_Y = ILI9488_LCD_HEIGHT-60;
 
 const uint32_t BPREV_R = 25;
 const uint32_t BPREV_X = 30;
-const uint32_t BPREV_Y = ILI9488_LCD_HEIGHT-30;
+const uint32_t BPREV_Y = ILI9488_LCD_HEIGHT-60;
 
 const uint32_t BOK_R = 25;
 const uint32_t BOK_X = ILI9488_LCD_WIDTH/2;
-const uint32_t BOK_Y = ILI9488_LCD_HEIGHT-30;
+const uint32_t BOK_Y = ILI9488_LCD_HEIGHT-60;
 
 const uint32_t B1_R = 30;
 const uint32_t B1_X = 60;
@@ -427,14 +427,30 @@ void draw_button(uint32_t clicked) {
 
 void draw_next_button() {
 	ili9488_draw_pixmap(BNEXT_X-imgplay.width/2, BNEXT_Y-imgplay.height/2, imgplay.width, imgplay.height+2, imgplay.data);
-}
-
-void draw_prev_button() {
-	if (!lock_menu || !lock_alerta){
+	if (!lock_menu){
 		ili9488_draw_pixmap(BPREV_X-imgret.width/2, BPREV_Y-imgret.height/2, imgret.width, imgret.height+2, imgret.data);
+		font_draw_text(&calibri_24, "Prox.", ILI9488_LCD_WIDTH-55, ILI9488_LCD_HEIGHT-24, 1);
 	}
 	if (!lock_lavagem){
 		ili9488_draw_pixmap(BPREV_X-imgstop.width/2, BPREV_Y-imgstop.height/2, imgstop.width, imgstop.height+2, imgstop.data);
+		font_draw_text(&calibri_24, "Cont.", ILI9488_LCD_WIDTH-55, ILI9488_LCD_HEIGHT-24, 1);
+	}
+}
+
+void draw_prev_button() {
+	if (!lock_alerta){
+		ili9488_draw_pixmap(BPREV_X-imgret.width/2, BPREV_Y-imgret.height/2, imgret.width, imgret.height+2, imgret.data);
+		font_draw_text(&calibri_24, "Voltar", 5, ILI9488_LCD_HEIGHT-24, 1);
+	}
+	
+	if (!lock_menu){
+		ili9488_draw_pixmap(BPREV_X-imgret.width/2, BPREV_Y-imgret.height/2, imgret.width, imgret.height+2, imgret.data);
+		font_draw_text(&calibri_24, "Anter.", 5, ILI9488_LCD_HEIGHT-24, 1);
+	}
+	
+	if (!lock_lavagem){
+		ili9488_draw_pixmap(BPREV_X-imgstop.width/2, BPREV_Y-imgstop.height/2, imgstop.width, imgstop.height+2, imgstop.data);
+		font_draw_text(&calibri_24, "Cancel.", 5, ILI9488_LCD_HEIGHT-24, 1);
 	}
 	
 }
@@ -442,13 +458,16 @@ void draw_prev_button() {
 void draw_ok_button() {
 	if(!lock_menu || !lock_concluido){
 		ili9488_draw_pixmap(BOK_X-imgok.width/2, BOK_Y-imgok.height/2, imgok.width, imgok.height+2, imgok.data);
+		font_draw_text(&calibri_24, "OK", ILI9488_LCD_WIDTH/2-12, ILI9488_LCD_HEIGHT-24, 1);
 	}
 	if(!lock_lavagem){
 		if(senha){
 			ili9488_draw_pixmap(BOK_X-imglocked.width/2, BOK_Y-imglocked.height, imglocked.width, imglocked.height+2, imglocked.data);
+			font_draw_text(&calibri_24, "Bloq.", ILI9488_LCD_WIDTH/2-20, ILI9488_LCD_HEIGHT-24, 1);
 		}
 		else{
 			ili9488_draw_pixmap(BOK_X-imgpause.width/2, BOK_Y-imgpause.height/2, imgpause.width, imgpause.height+2, imgpause.data);
+			font_draw_text(&calibri_24, "Pausar", ILI9488_LCD_WIDTH/2-30, ILI9488_LCD_HEIGHT-24, 1);
 		}
 	}
 	
@@ -853,7 +872,7 @@ void draw_lavagem(t_ciclo *mod){
 
 void set_alarm(){
 	rtc_clear_status(RTC, RTC_SCCR_ALRCLR);
-	rtc_set_date_alarm(RTC, 1, month , 1, day);
+	//rtc_set_date_alarm(RTC, 1, month , 1, day);
 	
 	int hora, min, sec;
 	rtc_get_time(RTC, &hora, &min, &sec);
@@ -947,7 +966,7 @@ void reset_alarm(){
 	rtc_clear_date_alarm(RTC);
 	rtc_clear_status(RTC, RTC_SR_ALARM);
 
-	rtc_enable_interrupt(RTC,RTC_IER_ALREN | RTC_IER_SECEN  );
+	rtc_enable_interrupt(RTC,RTC_IER_ALREN   );
 	set_alarm();
 }
 
