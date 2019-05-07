@@ -267,7 +267,7 @@ void RTC_Handler(void)
 }
 
 void BUT_handler(void){
-	if(lock_lavagem){
+	if(lock_lavagem || pause){
 		pin_toggle(LED_PIO, LED_PIN_MASK);
 		if(!porta_aberta){
 			porta_aberta = true;
@@ -851,7 +851,9 @@ void draw_lavagem(t_ciclo *mod){
 	
 	
 	ili9488_draw_pixmap(BD_X-imgret.width/2, BD_Y-imgret.height/2, imgret.width, imgret.height+2, imgret.data);
+	font_draw_text(&calibri_24, "Del", ILI9488_LCD_WIDTH-60, BD_Y-12, 1);
 	ili9488_draw_pixmap(BC_X-imgok.width/2, BC_Y-imgok.height/2, imgok.width, imgok.height+2, imgok.data);
+	font_draw_text(&calibri_24, "Ok", ILI9488_LCD_WIDTH-60, BC_Y-12, 1);
 	
 	if(!senha){
 		if(!pause){
@@ -928,19 +930,19 @@ void draw_menu(t_ciclo *mod){
 	
 	
 	if(!strcmp(mod->nome, "Rapido")){
-		ili9488_draw_pixmap(ILI9488_LCD_WIDTH/2-imgdiario.width/2, 290, imgfast.width, imgfast.height+2, imgfast.data);
+		ili9488_draw_pixmap(ILI9488_LCD_WIDTH/2-imgdiario.width/2, 280, imgfast.width, imgfast.height+2, imgfast.data);
 	}
 	else if(!strcmp(mod->nome, "Diario")){
-		ili9488_draw_pixmap(ILI9488_LCD_WIDTH/2-imgdiario.width/2, 290, imgdiario.width, imgdiario.height+2, imgdiario.data);
+		ili9488_draw_pixmap(ILI9488_LCD_WIDTH/2-imgdiario.width/2, 280, imgdiario.width, imgdiario.height+2, imgdiario.data);
 	}
 	else if(!strcmp(mod->nome, "Centrifuga")){
-		ili9488_draw_pixmap(ILI9488_LCD_WIDTH/2-imgcentrifuga.width/2, 290, imgcentrifuga.width, imgcentrifuga.height+2, imgcentrifuga.data);
+		ili9488_draw_pixmap(ILI9488_LCD_WIDTH/2-imgcentrifuga.width/2, 280, imgcentrifuga.width, imgcentrifuga.height+2, imgcentrifuga.data);
 	}
 	else if(!strcmp(mod->nome, "Enxague")){
-		ili9488_draw_pixmap(ILI9488_LCD_WIDTH/2-imgenxague.width/2, 290, imgenxague.width, imgenxague.height+2, imgenxague.data);
+		ili9488_draw_pixmap(ILI9488_LCD_WIDTH/2-imgenxague.width/2, 280, imgenxague.width, imgenxague.height+2, imgenxague.data);
 	}
 	else if(!strcmp(mod->nome, "Pesado")){
-		ili9488_draw_pixmap(ILI9488_LCD_WIDTH/2-imgheavy.width/2, 290, imgheavy.width, imgheavy.height+2, imgheavy.data);
+		ili9488_draw_pixmap(ILI9488_LCD_WIDTH/2-imgheavy.width/2, 280, imgheavy.width, imgheavy.height+2, imgheavy.data);
 	}
 	
 	draw_next_button();
@@ -1054,6 +1056,7 @@ int main(void)
 		}
 		if(flag_concluido){
 			lock_concluido = false;
+			senha = false;
 			draw_concluido(g_modo);
 			flag_concluido = false;
 			stack_reset(&lock);
